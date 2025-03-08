@@ -9,7 +9,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o restante do código para o container
-COPY . .
+COPY app/ ./app/
 
 # ExpÃµe a porta utilizada pela aplicação
 EXPOSE 8000
