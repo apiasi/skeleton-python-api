@@ -45,9 +45,15 @@ jobs:
       # Instala o SonarScanner CLI
       - name: Install SonarScanner CLI
         run: |
+          # Baixa o arquivo com redirecionamentos
           curl -L -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.0.2.4839-linux.zip
+          # Lista informações do arquivo baixado para debug
+          ls -lh sonar-scanner.zip
+          file sonar-scanner.zip
+          # Tenta extrair se for um arquivo válido
           unzip sonar-scanner.zip -d $HOME
           echo "$HOME/sonar-scanner-cli-7.0.2.4839-linux/bin" >> $GITHUB_PATH
+
 
       # Executa a análise do SonarCloud
       - name: Run SonarCloud Scan
