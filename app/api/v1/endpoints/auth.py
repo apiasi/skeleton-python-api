@@ -1,10 +1,12 @@
-﻿from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from datetime import timedelta
+﻿from datetime import timedelta
 from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr, constr
-from app.services.jwt_handler import create_access_token, verify_token
+
 from app.core.config import settings
+from app.services.jwt_handler import create_access_token, verify_token
 
 router = APIRouter()
 
