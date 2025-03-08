@@ -11,23 +11,28 @@ router = APIRouter()
 # "Banco de dados" simulado para os usuÃ¡rios
 fake_users_db = {}
 
+
 # Modelo para criaÃ§Ã£o de usuÃ¡rio
 class UserCreate(BaseModel):
     email: EmailStr
     full_name: Optional[str] = None
     password: constr(min_length=6)
 
+
 # Modelo para resposta com os dados do usuÃ¡rio (sem a senha)
 class User(BaseModel):
     email: EmailStr
     full_name: Optional[str] = None
 
+
 # Modelo para refresh token (caso a lÃ³gica de refresh seja implementada de forma diferenciada)
 class TokenRefresh(BaseModel):
     refresh_token: str
 
+
 # DefiniÃ§Ã£o do esquema de autenticaÃ§Ã£o para proteger endpoints
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     username = verify_token(token)
@@ -39,6 +44,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     user_data = fake_users_db[username]
     return User(email=username, full_name=user_data.get("full_name"))
 
+
 @router.post("/signup", response_model=User, status_code=status.HTTP_201_CREATED)
 def signup(user_create: UserCreate):
     """
@@ -46,14 +52,14 @@ def signup(user_create: UserCreate):
     """
     if user_create.email in fake_users_db:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="UsuÃ¡rio jÃ¡ existe"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="UsuÃ¡rio jÃ¡ existe"
         )
     fake_users_db[user_create.email] = {
         "full_name": user_create.full_name,
-        "password": user_create.password  # AtenÃ§Ã£o: em produÃ§Ã£o, nunca armazene senhas em texto plano!
+        "password": user_create.password,  # AtenÃ§Ã£o: em produÃ§Ã£o, nunca armazene senhas em texto plano!
     }
     return User(email=user_create.email, full_name=user_create.full_name)
+
 
 @router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -64,15 +70,15 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
     if not user or form_data.password != user["password"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="UsuÃ¡rio ou senha invÃ¡lidos"
+            detail="UsuÃ¡rio ou senha invÃ¡lidos",
         )
-    
+
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": form_data.username},
-        expires_delta=access_token_expires
+        data={"sub": form_data.username}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
 
 @router.get("/me", response_model=User)
 def read_users_me(current_user: User = Depends(get_current_user)):
@@ -80,6 +86,7 @@ def read_users_me(current_user: User = Depends(get_current_user)):
     Retorna as informaÃ§Ãµes do usuÃ¡rio autenticado.
     """
     return current_user
+
 
 @router.post("/refresh")
 def refresh_token(refresh_data: TokenRefresh):
@@ -91,13 +98,11 @@ def refresh_token(refresh_data: TokenRefresh):
     username = verify_token(refresh_data.refresh_token)
     if username is None or username not in fake_users_db:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token invÃ¡lido"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token invÃ¡lido"
         )
-    
+
     new_access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     new_access_token = create_access_token(
-        data={"sub": username},
-        expires_delta=new_access_token_expires
+        data={"sub": username}, expires_delta=new_access_token_expires
     )
     return {"access_token": new_access_token, "token_type": "bearer"}
