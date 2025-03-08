@@ -46,7 +46,7 @@ jobs:
       - name: Install SonarScanner CLI
         run: |
           # Baixa o arquivo com redirecionamentos
-          curl -L -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.0.2.4839-linux.zip
+          curl -L -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.0.2.4839-linux-x64.zip
           # Lista informações do arquivo baixado para debug
           ls -lh sonar-scanner.zip
           file sonar-scanner.zip
