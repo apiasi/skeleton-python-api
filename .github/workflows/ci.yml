@@ -23,6 +23,13 @@ jobs:
         with:
           python-version: '3.9'
 
+      # Configura o Java 17
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       # Instala as dependências e ferramentas de teste
       - name: Install dependencies
         run: |
