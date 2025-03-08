@@ -42,6 +42,10 @@ jobs:
         run: |
           pytest --maxfail=1 --disable-warnings -q
 
+      - name: Run tests and coverage
+        run: |
+          pytest --maxfail=1 --disable-warnings --cov=. --cov-report=xml -q
+
       # Instala o SonarScanner CLI
       - name: Install SonarScanner CLI
         run: |
@@ -62,3 +66,4 @@ jobs:
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.python.coverage.reportPaths=coverage.xml

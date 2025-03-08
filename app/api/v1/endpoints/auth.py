@@ -27,7 +27,7 @@ class User(BaseModel):
     full_name: Optional[str] = None
 
 
-# Modelo para refresh token (caso a lÃ³gica de refresh seja implementada de forma diferenciada)
+# Modelo para refresh token (caso a lógica de refresh seja implementada de forma diferenciada)
 class TokenRefresh(BaseModel):
     refresh_token: str
 
@@ -58,7 +58,7 @@ def signup(user_create: UserCreate):
         )
     fake_users_db[user_create.email] = {
         "full_name": user_create.full_name,
-        "password": user_create.password,  # AtenÃ§Ã£o: em produÃ§Ã£o, nunca armazene senhas em texto plano!
+        "password": user_create.password,  # Atenção: em produção, nunca armazene senhas em texto plano!
     }
     return User(email=user_create.email, full_name=user_create.full_name)
 
@@ -85,7 +85,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 @router.get("/me", response_model=User)
 def read_users_me(current_user: User = Depends(get_current_user)):
     """
-    Retorna as informaÃ§Ãµes do usuÃ¡rio autenticado.
+    Retorna as informações do usuário autenticado.
     """
     return current_user
 
@@ -95,7 +95,7 @@ def refresh_token(refresh_data: TokenRefresh):
     """
     Recebe um refresh token e retorna um novo access token.
     (Nesta implementaÃ§Ã£o simplificada, o refresh token Ã© tratado da mesma forma que o access token.
-    Em cenÃ¡rios reais, Ã© recomendÃ¡vel ter uma lÃ³gica diferenciada e armazenar os refresh tokens de forma segura.)
+    Em cenários reais, é recomendável ter uma lógica diferenciada e armazenar os refresh tokens de forma segura.)
     """
     username = verify_token(refresh_data.refresh_token)
     if username is None or username not in fake_users_db:
