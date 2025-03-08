@@ -1,0 +1,7 @@
+﻿fastapi
+uvicorn
+python-jose[cryptography]
+pydantic
+pydantic-settings
+pydantic[email]
+python-multipart
