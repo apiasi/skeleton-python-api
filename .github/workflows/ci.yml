@@ -23,14 +23,14 @@ jobs:
         with:
           python-version: '3.9'
 
-      # Configura o Java 17
+      # Configura o Java 17 (garante que o ambiente usará JDK 17)
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # Instala as dependências e ferramentas de teste
+      # Instala as dependências do Python e ferramentas de teste
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -42,12 +42,18 @@ jobs:
         run: |
           pytest --maxfail=1 --disable-warnings -q
 
-      # Executa a análise no SonarCloud
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v1
-        with:
-          organization: ${{ secrets.SONAR_ORGANIZATION }}
-          projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
-          projectName: ${{ secrets.SONAR_PROJECT_NAME }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # Instala o SonarScanner CLI
+      - name: Install SonarScanner CLI
+        run: |
+          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.4.0.2472-linux.zip
+          unzip sonar-scanner.zip -d $HOME
+          echo "$HOME/sonar-scanner-5.4.0.2472-linux/bin" >> $GITHUB_PATH
+
+      # Executa a análise do SonarCloud
+      - name: Run SonarCloud Scan
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
