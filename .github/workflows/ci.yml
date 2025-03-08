@@ -52,7 +52,7 @@ jobs:
           file sonar-scanner.zip
           # Tenta extrair se for um arquivo válido
           unzip sonar-scanner.zip -d $HOME
-          echo "$HOME/sonar-scanner-cli-7.0.2.4839-linux/bin" >> $GITHUB_PATH
+          echo "$HOME/sonar-scanner-cli-7.0.2.4839-linux-x64/bin" >> $GITHUB_PATH
 
 
       # Executa a análise do SonarCloud
