@@ -144,18 +144,30 @@ def test_signup_validation():
         json={
             "email": "invalid-email",
             "full_name": "Test User",
-            "password": "secret123",
+            "password": TEST_PASSWORD,
         },
     )
     assert response.status_code == 422
 
     # Test with short password
+    short_password = generate_random_password(5)  # Gera senha com apenas 5 caracteres
     response = client.post(
         "/api/v1/auth/signup",
         json={
             "email": "valid@example.com",
             "full_name": "Test User",
-            "password": "12345",  # less than min_length=6
+            "password": short_password,  # Senha menor que min_length=6
+        },
+    )
+    assert response.status_code == 422
+
+    # Test with empty full_name
+    response = client.post(
+        "/api/v1/auth/signup",
+        json={
+            "email": "valid@example.com",
+            "full_name": "",  # Nome vazio
+            "password": TEST_PASSWORD,
         },
     )
     assert response.status_code == 422
