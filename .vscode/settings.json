@@ -14,5 +14,9 @@
     "jose",
     "pydantic",
     "uvicorn"
-  ]
+  ],
+  "sonarlint.connectedMode.project": {
+    "connectionId": "apiasi",
+    "projectKey": "apiasi_skeleton-python-api"
+  }
 }

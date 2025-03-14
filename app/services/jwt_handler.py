@@ -28,7 +28,7 @@ def verify_token(token: str):
         )
         username: str = payload.get("sub")
         if username is None:
-            raise JWTError("Token invÃ¡lido")
+            raise JWTError("Token inválido")
         return username
     except JWTError:
         return None

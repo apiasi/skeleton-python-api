@@ -10,18 +10,18 @@ from app.services.jwt_handler import create_access_token, verify_token
 
 router = APIRouter()
 
-# "Banco de dados" simulado para os usuÃ¡rios
+# "Banco de dados" simulado para os usuários
 fake_users_db = {}
 
 
-# Modelo para criaÃ§Ã£o de usuÃ¡rio
+# Modelo para criaÃ§Ã£o de usuário
 class UserCreate(BaseModel):
     email: EmailStr
     full_name: Optional[str] = None
     password: constr(min_length=6)
 
 
-# Modelo para resposta com os dados do usuÃ¡rio (sem a senha)
+# Modelo para resposta com os dados do usuário (sem a senha)
 class User(BaseModel):
     email: EmailStr
     full_name: Optional[str] = None
@@ -32,7 +32,7 @@ class TokenRefresh(BaseModel):
     refresh_token: str
 
 
-# DefiniÃ§Ã£o do esquema de autenticaÃ§Ã£o para proteger endpoints
+# Definição do esquema de autenticação para proteger endpoints
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
@@ -41,7 +41,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     if username is None or username not in fake_users_db:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token invÃ¡lido ou usuÃ¡rio nÃ£o encontrado",
+            detail="Token inválido ou usuário não encontrado",
         )
     user_data = fake_users_db[username]
     return User(email=username, full_name=user_data.get("full_name"))
@@ -50,11 +50,11 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
 @router.post("/signup", response_model=User, status_code=status.HTTP_201_CREATED)
 def signup(user_create: UserCreate):
     """
-    Cria um novo usuÃ¡rio.
+    Cria um novo usuário.
     """
     if user_create.email in fake_users_db:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="UsuÃ¡rio jÃ¡ existe"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="usuário já existe"
         )
     fake_users_db[user_create.email] = {
         "full_name": user_create.full_name,
@@ -66,13 +66,13 @@ def signup(user_create: UserCreate):
 @router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     """
-    Valida as credenciais do usuÃ¡rio e retorna um token JWT.
+    Valida as credenciais do usuário e retorna um token JWT.
     """
     user = fake_users_db.get(form_data.username)
     if not user or form_data.password != user["password"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="UsuÃ¡rio ou senha invÃ¡lidos",
+            detail="usuário ou senha inválidos",
         )
 
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -100,7 +100,7 @@ def refresh_token(refresh_data: TokenRefresh):
     username = verify_token(refresh_data.refresh_token)
     if username is None or username not in fake_users_db:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token invÃ¡lido"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token inválido"
         )
 
     new_access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
