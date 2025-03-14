@@ -1,8 +1,20 @@
 ﻿from fastapi.testclient import TestClient
+import secrets
+import string
 
 from app.main import app
 
 client = TestClient(app)
+
+
+# Função auxiliar para gerar senha aleatória
+def generate_random_password(length=12):
+    alphabet = string.ascii_letters + string.digits + string.punctuation
+    return "".join(secrets.choice(alphabet) for _ in range(length))
+
+
+# Senha aleatória global para os testes
+TEST_PASSWORD = generate_random_password()
 
 
 def test_signup_and_login():
@@ -12,7 +24,7 @@ def test_signup_and_login():
         json={
             "email": "test@example.com",
             "full_name": "Test User",
-            "password": "secret123",
+            "password": TEST_PASSWORD,
         },
     )
     assert response.status_code == 201
@@ -20,7 +32,7 @@ def test_signup_and_login():
     # Login
     response = client.post(
         "/api/v1/auth/login",
-        data={"username": "test@example.com", "password": "secret123"},
+        data={"username": "test@example.com", "password": TEST_PASSWORD},
     )
     assert response.status_code == 200
     data = response.json()
@@ -42,7 +54,7 @@ def test_signup_duplicate_user():
         json={
             "email": "duplicate@example.com",
             "full_name": "Test User",
-            "password": "secret123",
+            "password": TEST_PASSWORD,
         },
     )
     assert response.status_code == 201
@@ -53,7 +65,7 @@ def test_signup_duplicate_user():
         json={
             "email": "duplicate@example.com",
             "full_name": "Test User 2",
-            "password": "secret456",
+            "password": TEST_PASSWORD,
         },
     )
     assert response.status_code == 400
@@ -66,13 +78,13 @@ def test_get_me_endpoint():
         json={
             "email": "me@example.com",
             "full_name": "Test User",
-            "password": "secret123",
+            "password": TEST_PASSWORD,
         },
     )
 
     login_response = client.post(
         "/api/v1/auth/login",
-        data={"username": "me@example.com", "password": "secret123"},
+        data={"username": "me@example.com", "password": TEST_PASSWORD},
     )
     access_token = login_response.json()["access_token"]
 
@@ -100,13 +112,13 @@ def test_refresh_token():
         json={
             "email": "refresh@example.com",
             "full_name": "Test User",
-            "password": "secret123",
+            "password": TEST_PASSWORD,
         },
     )
 
     login_response = client.post(
         "/api/v1/auth/login",
-        data={"username": "refresh@example.com", "password": "secret123"},
+        data={"username": "refresh@example.com", "password": TEST_PASSWORD},
     )
     access_token = login_response.json()["access_token"]
 
