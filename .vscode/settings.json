@@ -9,14 +9,10 @@
   "python.testing.pytestArgs": ["tests"],
   "cSpell.language": "en,pt,pt_BR",
   "cSpell.enabled": true,
-  "cSpell.words": [
-    "fastapi",
-    "jose",
-    "pydantic",
-    "uvicorn"
-  ],
+  "cSpell.words": ["fastapi", "jose", "pydantic", "uvicorn"],
   "sonarlint.connectedMode.project": {
     "connectionId": "apiasi",
     "projectKey": "apiasi_skeleton-python-api"
-  }
+  },
+  "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }
